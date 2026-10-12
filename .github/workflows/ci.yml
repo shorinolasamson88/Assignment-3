@@ -9,7 +9,7 @@ on:
 
 
 jobs:
- build:
+ validate:
   runs-on: ubuntu-latest
 
   steps:
@@ -22,12 +22,34 @@ jobs:
    - name: Validation running lint.sh
      run: ./scripts/lint.sh
 
+ test:
+  runs-on: ubuntu-latest
+  needs: [validate]
+
+  steps:
+   - name: checkout repository
+     uses: actions/checkout@v4
+
+   - name: setting executable permission
+     run: chmod +x grade.sh app/*.sh scripts/*.sh tests/*.sh
+
    - name: testing running test.sh
-     needs: [Validation running lint.sh]
      run: ./tests/test.sh
 
+
+docker:
+  runs-on: ubuntu-latest
+  needs: [test]
+
+  steps:
+   - name: checkout repository
+     uses: actions/checkout@v4
+
+   - name: setting executable permission
+     run: chmod +x grade.sh app/*.sh scripts/*.sh tests/*.sh
+
+
    - name: docker running build.sh
-     needs: [testing running test.sh]
      run: ./scripts/build.sh
 
    
