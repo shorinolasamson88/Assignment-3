@@ -1,0 +1,34 @@
+name: My devops-tool CI
+
+on:
+ push:
+  branches: [ main ]
+
+ pull_request:
+  branches: [ main ]
+
+
+jobs:
+ build:
+  runs-on: ubuntu-latest
+
+  steps:
+   - name: checkout repository
+     uses: actions/checkout@v4
+
+   - name: setting executable permission
+     run: chmod +x grade.sh app/*.sh scripts/*.sh tests/*.sh
+
+   - name: Validation running lint.sh
+     run: ./scripts/lint.sh
+
+   - name: testing running test.sh
+     needs: [Validation running lint.sh]
+     run: ./tests/test.sh
+
+   - name: docker running build.sh
+     needs: [testing running test.sh]
+     run: ./scripts/build.sh
+
+   
+     
